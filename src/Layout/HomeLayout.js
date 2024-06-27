@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Button from 'react-bootstrap/Button';
+// import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
@@ -20,6 +20,65 @@ function HomeLayout({addToCart}) {
       Login
     </Tooltip>
   );
+
+  const registerUser =(e) =>{
+    e.preventDefault();
+    const signup = {
+      username: e.target.username.value,
+      email: e.target.email.value,
+      phoneNumber: e.target.phoneNumber.value,
+      password: e.target.password.value,
+      confirmPassword: e.target.confirmPassword.value
+    }
+    if(e.target.password.value === e.target.confirmPassword.value){
+    fetch("http://localhost:5000/signup/insert",{
+       method: 'POST',
+       headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+       },
+       body: JSON.stringify(signup)
+    })
+    .then(()=>{
+      console.log("New note added");
+      alert("Signup success")
+    })
+    .catch((err)=>{
+      console.log(err);
+      alert("Signup Failed")
+    })
+  }
+  else{
+    alert("Password doesn't match")
+  }
+  // window.location.reload(false);
+  }
+
+
+  const loginForm = (e) => {
+    e.preventDefault()
+    const user = {
+        username: e.target.username.value,
+        password: e.target.password.value
+    }
+    fetch("http://localhost:5000/signup/login",{
+        method: "POST",
+        headers: {
+            "Accept" : "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(user)
+    })
+    .then(res => res.json())
+    .then((data)=>{
+        if(data.userFound) {
+            alert("Login Success")
+        }
+        else{
+            alert("Login Failed")
+        }
+    })
+}
   return (
     <>
       <nav class="navbar">
@@ -79,21 +138,21 @@ function HomeLayout({addToCart}) {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form>
+                <form method="POST" onSubmit={(e)=>{loginForm(e)}}>
                   <div class="mb-3">
-                    <label for="recipient-name" class="col-form-label fw-bold">Username</label>
-                    <input type="text" class="form-control" id="recipient-name" />
+                    <label  for="recipient-name" class="col-form-label fw-bold">Username</label>
+                    <input type="text" name="username" class="form-control" id="recipient-name" />
                   </div>
                   <div class="mb-3">
                     <label for="message-text" class="col-form-label fw-bold">Password</label>
-                    <input type="password" class="form-control mb-3" id="message-text" />
+                    <input type="password" name="password" class="form-control mb-3" id="message-text" />
                     <a href="#" data-bs-toggle="modal" data-bs-target="#signup" style={{fontSize: "13px"}}><b>Doesn't have a account</b></a>
                   </div>
-                </form>
-              </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Login</button>
+                {/* <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> */}
+                <input type="submit" class="bg-primary bold rounded-1 text-white py-1 d-inlineblock" data-bs-dismiss="modal" value="Login" />
+              </div>
+              </form>
               </div>
             </div>
           </div>
@@ -107,28 +166,32 @@ function HomeLayout({addToCart}) {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form>
-                  <div class="mb-2">
+                <form method='POST' onSubmit={(e)=>{registerUser(e)}}>
+                  <div class="mb-1">
                     <label for="recipient-name" class="col-form-label fw-bold">Username</label>
-                    <input type="text" class="form-control" id="recipient-name" />
+                    <input type="text" name="username" class="form-control" id="recipient-name" />
                   </div>
-                  <div class="mb-2">
+                  <div class="mb-1">
                     <label for="message-text" class="col-form-label fw-bold">Mail</label>
-                    <input type="E-mail" class="form-control mb-3" id="message-text" />
+                    <input type="E-mail" name="email" class="form-control mb-1" id="message-text" />
                   </div>
-                  <div class="mb-2">
+                  <div class="mb-1">
                     <label for="message-text" class="col-form-label fw-bold">Phone number</label>
-                    <input type="number" class="form-control mb-3" id="message-text" />
+                    <input type="text" name="phoneNumber" class="form-control mb-1" id="message-text" />
                   </div>
-                  <div class="mb-2">
+                  <div class="mb-1">
                     <label for="message-text" class="col-form-label fw-bold">Create password</label>
-                    <input type="password" class="form-control mb-3" id="message-text" />
+                    <input type="password" name="password" class="form-control mb-1" id="message-text" />
                   </div>
-                </form>
+                  <div class="mb-1">
+                    <label for="message-text" class="col-form-label fw-bold">Confirm password</label>
+                    <input type="password" name="confirmPassword" class="form-control mb-1" id="message-text" />
+                  </div>
+              <div class="modal-footer text-right d-inlineblock">
+                {/* <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> */}
+                <input type="submit" class="bg-primary bold rounded-1 text-white py-1 d-inlineblock" data-bs-dismiss="modal" value="Signup" />
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Signup</button>
+              </form>
               </div>
             </div>
           </div>
